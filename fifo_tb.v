@@ -2,7 +2,6 @@
 module fifo_tb;
 parameter width = 4;
 parameter height = 8;
-parameter ptr_width = 3;
 
 wire [width-1:0] data_out;
 wire empthy, full;
@@ -11,26 +10,16 @@ reg clk;
 reg rst;
 reg write, read;
 
-wire [11:0] f0,f1,f2,f3,f4,f5,f6,f7;
-
-assign f0 = fifo_i.memory[0];
-assign f1 = fifo_i.memory[1];
-assign f2 = fifo_i.memory[2];
-assign f3 = fifo_i.memory[3];
-assign f4 = fifo_i.memory[4];
-assign f5 = fifo_i.memory[5];
-assign f6 = fifo_i.memory[6];
-assign f7 = fifo_i.memory[7];
 
 
 
-fifo #(.width(width), .height(height), .ptr_width(ptr_width)) fifo_i(
+fifo #(.width(width), .height(height)) fifo_i(
 .data_out(data_out), .full(full),
 .empthy(empthy), .read(read),
 .write(write), .clk(clk), .rst(rst),
 .data_in(data_in));
 
-always
+initial
 begin
 	clk = 0;
 	forever #3 clk = ~clk;
@@ -51,8 +40,9 @@ begin
 end
 initial
 begin
-	#80; data_in = 1;
-	forever #10 data_in = data_in + 1;
+        data_in = 1;
+	for(integer i = 0; i<10; i=i+1)
+	 data_in = data_in + 1;
 end
 initial
 fork

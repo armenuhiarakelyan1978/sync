@@ -11,26 +11,24 @@ module fifo(
 
 parameter width = 4;
 parameter height = 8;
-parameter ptr_width = 3;
 
 
 output [width-1:0] data_out;
-output full;
-output empthy;
+output reg full;
+output reg empthy;
 input clk;
 input rst;
 input [width-1:0] data_in;
 input write;
 input read;
 
-reg [ptr_width-1:0] read_ptr, write_ptr;
-reg [ptr_width-1:0] ptr_diff;
+reg [height-1:0] read_ptr, write_ptr;
 
 reg [width-1:0] data_out;
 reg [width-1:0] memory[height-1:0];
 
-assign empthy = (ptr_diff == 0)?1'b1:1'b0;
-assign full =   (ptr_diff == height)?1'b1:1'b0;
+//assign empthy = (ptr_diff == 0)?1'b1:1'b0;
+//assign full =   (ptr_diff == height)?1'b1:1'b0;
 
 
 
@@ -42,20 +40,28 @@ if(rst)begin
 	data_out <= 0;
 	read_ptr <= 0;
 	write_ptr <= 0;
-	ptr_diff <=0;
+	full <=0;
+	empthy <= 0;
 end
 else begin
-	if(!empthy && read)begin
-		data_out <= memory[read_ptr];
-		read_ptr <= read_ptr + 1'b1;
-		ptr_diff <= ptr_diff - 1'b1;
-	end
-	else
-	if(!full && write)begin
+ 
+	if( write )begin
 		memory[write_ptr]<=data_in;
+		if(write_ptr!=height)
 		write_ptr <= write_ptr + 1'b1;
-		ptr_diff <= ptr_diff + 1'b1;
+	        else 
+			full <=1;
+             
 	end
+
+	if(read )begin
+		data_out <= memory[read_ptr];
+		if(read_ptr != height)
+		read_ptr <= read_ptr + 1'b1;
+	        else
+                   empthy <= 1;
+	end
+
 end
 
 end

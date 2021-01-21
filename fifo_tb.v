@@ -9,7 +9,7 @@ reg [width-1:0] data_in;
 reg clk;
 reg rst;
 reg write, read;
-
+integer i;
 
 
 
@@ -41,20 +41,21 @@ end
 initial
 begin
         data_in = 1;
-	for(integer i = 0; i<10; i=i+1)
-	 data_in = data_in + 1;
+	for( i = 0; i<5; i=i+1)
+@(negedge clk) data_in = data_in + 1;
 end
 initial
-fork
-	#80; write = 1;
-	#180; write = 0;
+begin
 
-	#250; read = 1;
-	#350; read = 0;
+	#15;  write = 1; read = 0;
+         #80; write = 0; read = 1;
 
-	#420; write = 1;
+	#250; read = 0; write = 0;
+	#350; read = 0; write = 1;
+
+	#420; write = 1; read = 1;
 	#480; write = 0;
-join
+end
 initial
 begin
 	$dumpfile("fifo_tb.vcd");

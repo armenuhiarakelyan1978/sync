@@ -5,8 +5,8 @@ module fifo(
 	clk,
 	rst,
 	data_in,
-	write,
-	read);
+        write,
+        read);
 
 parameter width = 4;
 parameter height = 8;
@@ -32,7 +32,7 @@ reg full_r;
 reg full_r_r;
 
 assign empty = empty_r & ~empty_r_r;
-assign full =  full_r & ~full_r_r ;
+assign full =  full_r & ~full_r_r;
 
 
 
@@ -63,9 +63,9 @@ else if(!write && !empty && read)begin
 		empty_r <= 1;
 	end else
 	begin
-		diff <= diff - 1;
-		empty_r <= 0;
-	end
+	diff <= diff - 1;
+	empty_r <= 0;
+        end
 end
 else if (write && read && empty)begin
 	memory[write_ptr] <= data_in;
@@ -91,7 +91,7 @@ end
 else if (write && read && !full && !empty)
 begin
 	data_out <= memory[read_ptr];
-	memory[write_ptr] <= data_in;
+        memory[write_ptr] <= data_in;
 	read_ptr <= read_ptr + 1;
 	if(diff == 0)begin
 		empty_r <= 1;
@@ -112,12 +112,12 @@ end
 
 always@(posedge clk)
 begin
-if(rst)begin
-	full_r_r <= 0;
-	empty_r_r <=1; 
-end else begin
-	full_r_r <= full_r;
-	empty_r_r <= empty_r;
-end
+	if(rst)begin
+		full_r_r <= 0;
+		empty_r_r <=1; 
+	end else begin
+		full_r_r <= full_r;
+		empty_r_r <= empty_r;
+	end
 end
 endmodule
